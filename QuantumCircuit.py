@@ -1,3 +1,5 @@
+import qiskit
+
 class QuantumCircuit:
     """ 
     This class provides a simple interface for interaction 
@@ -23,29 +25,24 @@ class QuantumCircuit:
         self._circuit.h(all_qubits)
         self._circuit.barrier()
         if n_qubits > 1:
-        	# Entangle every qubit to the 0th qubit
+            # Entangle every qubit to the 0th qubit
             self._circuit.cnot(all_qubits[0], all_qubits[1:])
         for i in range(n_qubits):
             self._circuit.ry(self.theta.params[i], all_qubits[i])
         self._circuit.measure_all()
     
-    def run(self, thetas_list):
-        bind_dict = {}
+    def run(self, thetas):
+        # TODO: consider verifying that each list inside thetas has length n_qubits
         binds = []
-#         for i in range(len(self.theta.params)):
-#             for theta in thetas:
-#                 bind_dict[self.theta.params] = theta
-#         bounds_circuits = [self._circuit.bind_parameters({self.theta: theta} for theta in thetas)]
-        for i in range(len(self.theta.params)):
-#             for thetas in thetas_list:
-            binds.append({self.theta.params[i] : thetas[i] for thetas in thetas_list})
-#                 bind_dict[self.theta.params[i]] = thetas[i]
+        for theta in thetas:
+            bind = {}
+            for i in range(len(theta)):
+                bind[self.theta.params[i]] = theta[i]
+            binds.append(bind)
         job = qiskit.execute(self._circuit, 
                              self.backend, 
                              shots = self.shots,
-#                              parameter_binds = [bind_dict])
                              parameter_binds = binds)
-#                              parameter_binds = [{self.theta: theta} for theta in thetas])
         result = job.result().get_counts(self._circuit)
         
         counts = np.array(list(result.values()))
@@ -54,6 +51,8 @@ class QuantumCircuit:
         # Compute probabilities for each state
         probabilities = counts / self.shots
         # Get state expectation
-        expectation = np.sum(states * probabilities)
-        
-        return np.array([expectation])
+        expectation = []
+        for i in range(self.n_qubits):
+            exp = np.sum(probabilities[2**i::2**(i+1)])
+            expectation.append(exp)
+        return np.array(expectation)
