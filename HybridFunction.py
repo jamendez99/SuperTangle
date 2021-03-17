@@ -1,3 +1,8 @@
+import torch
+from torch.autograd import Function
+import torch.nn as nn
+import QuantumCircuit
+
 class HybridFunction(Function):
     """ Hybrid quantum - classical function definition """
     

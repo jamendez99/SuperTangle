@@ -1,6 +1,11 @@
+import HybridFunction
+from HybridFunction import Hybrid
+import torch
+import torch.nn as nn
+
 class QuantumNet(nn.Module):
     def __init__(self, n_qubits):
-        super(Net, self).__init__()
+        super(QuantumNet, self).__init__()
         self.conv1 = nn.Conv2d(1, 6, kernel_size=5)
         self.conv2 = nn.Conv2d(6, 16, kernel_size=5)
         self.dropout = nn.Dropout2d()
