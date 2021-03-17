@@ -25,4 +25,4 @@ class QuantumNet(nn.Module):
         x = self.fc2(x)
         x = self.hybrid(x)
         x = self.fc3(x.float())
-        return torch.cat((x, 1 - x), -1)
+        return x
