@@ -1,4 +1,5 @@
 import qiskit
+import numpy as np
 
 class QuantumCircuit:
     """ 

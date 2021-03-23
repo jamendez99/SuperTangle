@@ -30,18 +30,23 @@ X = df.drop('Class', axis=1)
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, shuffle=True)
 
-X_train = torch.from_numpy(X_train.to_numpy()).float()
-X_test =  torch.from_numpy(X_test.to_numpy()).float()
-y_train = torch.from_numpy(y_train.to_numpy())
-y_test =  torch.from_numpy(y_test.to_numpy())
+# Focusing on the first 100 training samples
+X_train = torch.from_numpy(X_train.to_numpy()[:100]).float()
+y_train = torch.from_numpy(y_train.to_numpy()[:100])
+# Focusing on the first 50 test samples
+X_test =  torch.from_numpy(X_test.to_numpy()[:50]).float()
+y_test =  torch.from_numpy(y_test.to_numpy()[:50])
 
 train_ds = torch.utils.data.TensorDataset(X_train, y_train)
 test_ds = dataset = torch.utils.data.TensorDataset(X_test, y_test)
+print("X_train shape: " + str(X_train.shape))
+print("X_test shape: " + str(X_test.shape))
+# exit()
 
 
 train_loader = torch.utils.data.DataLoader(train_ds, batch_size=1, shuffle=True)
 test_loader = torch.utils.data.DataLoader(test_ds, batch_size=1, shuffle=True)
-print(train_loader)
+
 
 # -------------------------------------------
 # Here is where we actually train the network
@@ -50,7 +55,7 @@ model = QuantumNet(2)
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 loss_func = nn.BCEWithLogitsLoss()
 
-epochs = 1
+epochs = 20
 loss_list = []
 
 model.train()
@@ -73,8 +78,3 @@ for epoch in range(epochs):
         100. * (epoch + 1) / epochs, loss_list[-1]))
 
 
-# Concentrating on the first 100 samples
-# n_samples = 100
-
-# X_train = datasets.MNIST(root='./data', train=True, download=True,
-#                          transform=transforms.Compose([transforms.ToTensor()]))
