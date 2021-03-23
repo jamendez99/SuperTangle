@@ -2,6 +2,9 @@ import HybridFunction
 from HybridFunction import Hybrid
 import torch
 import torch.nn as nn
+import qiskit
+import numpy as np
+import torch.nn.functional as F
 
 class QuantumNet(nn.Module):
     def __init__(self, n_qubits):
