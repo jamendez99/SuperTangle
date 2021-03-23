@@ -1,2 +1,4 @@
 # Ignore test files
 test-*
+# Ignore data folder
+data
