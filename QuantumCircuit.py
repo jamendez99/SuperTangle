@@ -44,16 +44,24 @@ class QuantumCircuit:
                              self.backend, 
                              shots = self.shots,
                              parameter_binds = binds)
-        result = job.result().get_counts(self._circuit)
-        
-        counts = np.array(list(result.values()))
-        states = np.array(list(result.keys())).astype(float)
-        
-        # Compute probabilities for each state
-        probabilities = counts / self.shots
-        # Get state expectation
-        expectation = []
-        for i in range(self.n_qubits):
-            exp = np.sum(probabilities[2**i::2**(i+1)])
-            expectation.append(exp)
-        return np.array(expectation)
+        result = job.result()
+        out = []
+        for i in range(len(result.results)):
+            res = result.get_counts(i)
+            print(res)
+            counts = np.array(list(res.values()))
+            states = np.array(list(res.keys()))
+            print(states)
+            # Compute probabilities for each state
+            probabilities = counts / self.shots
+            print(probabilities)
+            # Get state expectation
+            expectation = []
+            for j in range(self.n_qubits):
+                exp = 0
+                for k in range(len(states)):
+                    if states[k][-(j+1)] == '1':
+                        exp += probabilities[k]
+                expectation.append(exp)
+            out.append(expectation)
+        return np.array(out)
