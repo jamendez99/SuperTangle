@@ -12,8 +12,9 @@ class HybridFunction(Function):
         """ Forward pass computation """
         ctx.shift = shift
         ctx.quantum_circuit = quantum_circuit
-        
-        expectation_z = ctx.quantum_circuit.run([input[0].tolist()])
+        # print(input.size())
+        # print(input.tolist())
+        expectation_z = ctx.quantum_circuit.run(input.tolist())
         result = torch.tensor([expectation_z])
         ctx.save_for_backward(input, result)
 
@@ -32,9 +33,12 @@ class HybridFunction(Function):
         for i in range(len(input_list)):
             expectation_right = ctx.quantum_circuit.run([shift_right[i]])
             expectation_left  = ctx.quantum_circuit.run([shift_left[i]])
-            gradient = torch.tensor([expectation_right]) - torch.tensor([expectation_left])
+            gradient = torch.tensor(expectation_right) - torch.tensor(expectation_left)
             gradients.append(gradient)
-        gradients = torch.stack(gradients).permute(2, 1, 0)
+        gradients = torch.stack(gradients).permute(1, 0, 2)
+        # print("Shape of gradients: {}".format(gradients.size()))
+        # print("Shape of grad_output: {}".format(grad_output.size()))
+        # exit()
         return gradients.float() * grad_output.float(), None, None
 
 class Hybrid(nn.Module):

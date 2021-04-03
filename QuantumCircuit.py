@@ -48,13 +48,10 @@ class QuantumCircuit:
         out = []
         for i in range(len(result.results)):
             res = result.get_counts(i)
-            print(res)
             counts = np.array(list(res.values()))
             states = np.array(list(res.keys()))
-            print(states)
             # Compute probabilities for each state
             probabilities = counts / self.shots
-            print(probabilities)
             # Get state expectation
             expectation = []
             for j in range(self.n_qubits):
