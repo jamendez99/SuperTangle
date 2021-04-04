@@ -77,6 +77,7 @@ for epoch in range(epochs):
     total_loss = []
     correct = 0
     count_0 = 0
+    total_size = 0
     for batch_idx, (data, target) in enumerate(train_loader):
         # if batch_idx > 20:
         #     exit()
@@ -90,6 +91,7 @@ for epoch in range(epochs):
         # print(target.view_as(pred).float())
         correct += pred.eq(target.view_as(pred).float()).sum().item()
         loss = loss_func(output, target.float())
+        total_size += list(output.size())[0]
         # Backward pass
         loss.backward()
         # Optimize the weights
@@ -100,8 +102,8 @@ for epoch in range(epochs):
     print('Training [{:.0f}%]\tLoss: {:.4f}'.format(
         100. * (epoch + 1) / epochs, loss_list[-1]))
     print('Accuracy: {:.1f}%'.format(
-        correct / (batch_size * len(train_loader)) * 100))
-    print('Proportion of 0s was: {}%'.format(100* count_0 / (batch_size * len(train_loader))))
+        correct / total_size* 100))
+    print('Proportion of 0s was: {}%'.format(100* count_0 / total_size))
 
 # ---------------------
 # Save training results
