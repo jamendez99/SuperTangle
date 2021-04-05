@@ -63,12 +63,12 @@ models_path = str(dir_path) + '/res/european/qnn/models/'
 
 loss_dict = {}
 acc_dict  = {}
-for quantum_size in range(1, 3):
+for quantum_size in range(1, 17):
     model = QuantumNet(quantum_size)
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     loss_func = nn.BCEWithLogitsLoss(pos_weight=torch.tensor([1000/492.0]))
 
-    epochs = 10
+    epochs = 50
     loss_list = []
     acc_list = []
     model.train()
@@ -97,16 +97,13 @@ for quantum_size in range(1, 3):
             100. * (epoch + 1) / epochs, 
             loss_list[-1], 
             acc_list[-1]))
-    loss_dict[quantum_size] = loss_list
-    acc_dict[quantum_size ] = acc_list
+    # loss_dict[quantum_size] = loss_list
+    # acc_dict[quantum_size ] = acc_list
     torch.save(model.state_dict(), models_path + 'qnn_' + str(quantum_size) + '.pt')
+    with open(loss_path, 'a', newline='') as csv_file:  
+        writer = csv.writer(csv_file)
+        writer.writerow([quantum_size] + loss_list)
 
-with open(loss_path, 'w', newline='') as csv_file:  
-    writer = csv.writer(csv_file)
-    for key in loss_dict.keys():
-       writer.writerow([key] + loss_dict[key])
-
-with open(acc_path, 'w', newline='') as csv_file:  
-    writer = csv.writer(csv_file)
-    for key in acc_dict.keys():
-       writer.writerow([key] + acc_dict[key])
+    with open(acc_path, 'a', newline='') as csv_file:  
+        writer = csv.writer(csv_file)
+        writer.writerow([quantum_size] + acc_list)
